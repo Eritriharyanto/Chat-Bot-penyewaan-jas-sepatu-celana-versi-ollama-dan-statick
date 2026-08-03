@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ shop_name }} — Sewa Jas Formal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+{% macro logo_mark(size=40) %}
+<svg viewBox="0 0 48 48" width="{{ size }}" height="{{ size }}" aria-hidden="true">
+  <circle cx="24" cy="24" r="22" fill="var(--brand-primary)"/>
+  <circle cx="24" cy="24" r="22" fill="none" stroke="var(--brand-accent)" stroke-width="1.4"/>
+  <path d="M14 15h20l-1.6 3.4L21.5 34h-4.2l10.7-19.6H14z" fill="var(--brand-accent)"/>
+</svg>
+{% endmacro %}
+
+<header class="nav">
+  <div class="nav__inner">
+    <a href="#top" class="nav__brand">
+      <img
+        src="{{ url_for('static', filename='assets/logo.jfif') }}"
+        alt="{{ shop_name }}"
+        class="logo"
+      >
+    </a>
+    <nav class="nav__links">
+      <a href="#koleksi">Koleksi</a>
+      <a href="#paket">Paket</a>
+      <a href="#cara-sewa">Cara Sewa</a>
+      <a href="#faq">FAQ</a>
+      <a href="#lokasi">Lokasi</a>
+    </nav>
+    <button class="nav__cta" id="navChatBtn">Tanya Chatbot</button>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="hero__pinstripe" aria-hidden="true"></div>
+    <div class="hero__grid">
+      <div class="hero__inner reveal">
+        <p class="eyebrow">{{ shop_name }} &mdash; Sewa Jas &amp; Formal Wear</p>
+        <h1 class="hero__title">Tampil rapi untuk<br>hari yang penting.</h1>
+        <p class="hero__lede">{{ info.deskripsi }} Konsultasi ukuran, warna, dan harga langsung lewat chatbot kami, aktif {{ info.jam_operasional }}.</p>
+        <div class="hero__actions">
+          <a href="#koleksi" class="btn btn--primary">Lihat Koleksi</a>
+          <button class="btn btn--ghost" id="heroChatBtn">Tanya Chatbot</button>
+        </div>
+        <dl class="hero__stats">
+          <div><dt>Ukuran tersedia</dt><dd>XS &ndash; 5XL</dd></div>
+          <div><dt>Pilihan warna jas</dt><dd>{{ produk.jas.varian_warna | length }}+</dd></div>
+          <div><dt>Mulai dari</dt><dd>{{ produk.sepatu.varian_warna[0].harga_sewa_per_hari | rupiah }}/hari</dd></div>
+        </dl>
+      </div>
+      <div class="hero__visual reveal">
+        <div class="hero__badge">Fitting di tempat</div>
+        <svg viewBox="0 0 320 360" class="hero__jas" aria-hidden="true">
+          <circle cx="160" cy="180" r="150" fill="var(--brand-accent)" opacity="0.12"/>
+          <circle cx="160" cy="180" r="112" fill="none" stroke="var(--brand-accent)" stroke-width="1" opacity="0.35"/>
+          <g fill="none" stroke="var(--brand-primary)" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round">
+            <path d="M160 66 L128 92 L100 108 L88 240 L118 250 L124 150 L124 296 L196 296 L196 150 L202 250 L232 240 L220 108 L192 92 Z"/>
+            <path d="M128 92 L148 132 L160 108 L172 132 L192 92"/>
+            <line x1="160" y1="108" x2="160" y2="296"/>
+            <path d="M118 178 h20" opacity="0.7"/>
+            <path d="M182 178 h20" opacity="0.7"/>
+          </g>
+          <circle cx="160" cy="150" r="3.2" fill="var(--brand-accent)"/>
+          <circle cx="160" cy="176" r="3.2" fill="var(--brand-accent)"/>
+          <circle cx="160" cy="202" r="3.2" fill="var(--brand-accent)"/>
+          <path d="M60 300 q100 40 200 0" fill="none" stroke="var(--brand-accent)" stroke-width="1.4" stroke-dasharray="2 8" opacity="0.6"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <div class="tape-divider" aria-hidden="true"><svg viewBox="0 0 1200 24" preserveAspectRatio="none"><line x1="0" y1="12" x2="1200" y2="12"/></svg></div>
+
+  <section class="section section--why reveal">
+    <p class="eyebrow">Kenapa {{ shop_name }}</p>
+    <h2 class="section__title">Nyaman dari pilih sampai balikin</h2>
+    <div class="cards">
+      <article class="card">
+        <span class="card__mark">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--brand-primary)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3l-6.5 6.5M14.5 6.5L3 18l3 3L17.5 9.5"/><path d="M17 8l-2-2M13 12l-2-2"/></svg>
+        </span>
+        <h3>Ukuran lengkap</h3>
+        <p>Tersedia dari XS sampai 5XL untuk jas, jadi hampir semua bentuk badan kebagian pas.</p>
+      </article>
+      <article class="card">
+        <span class="card__mark">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--brand-primary)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        </span>
+        <h3>Konsultasi kapan saja</h3>
+        <p>Chatbot kami siap jawab soal ukuran, warna, dan harga tanpa perlu nunggu toko buka.</p>
+      </article>
+      <article class="card">
+        <span class="card__mark">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--brand-primary)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h11v8H3z"/><path d="M14 11h4l3 3v1h-7z"/><circle cx="7" cy="17" r="1.6"/><circle cx="17" cy="17" r="1.6"/></svg>
+        </span>
+        <h3>{{ 'Layanan antar' if info.layanan_antar.tersedia else 'Ambil di toko' }}</h3>
+        <p>{{ info.layanan_antar.keterangan }}</p>
+      </article>
+    </div>
+  </section>
+
+  <div class="tape-divider" aria-hidden="true"><svg viewBox="0 0 1200 24" preserveAspectRatio="none"><line x1="0" y1="12" x2="1200" y2="12"/></svg></div>
+
+  <section id="koleksi" class="section reveal">
+    <p class="eyebrow">Koleksi</p>
+    <h2 class="section__title">Jas, celana, dan sepatu formal</h2>
+    <div class="produk-grid">
+      {% for kode, item in produk.items() %}
+      <article class="produk-card">
+        <span class="produk-card__icon">
+          {% if kode == 'jas' %}
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--brand-accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4l4 3 4-3M8 4L4 8v11h16V8l-4-4M8 4l2.5 5-1 2M16 4l-2.5 5 1 2"/></svg>
+          {% elif kode == 'celana' %}
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--brand-accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l1 6-2 12h-3l-2-9-2 9H7L5 9z"/></svg>
+          {% else %}
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--brand-accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18c0-2 1.5-3 3-3l3-4h3l5 3h4a2 2 0 0 1 2 2v2z"/></svg>
+          {% endif %}
+        </span>
+        <h3>{{ kode|capitalize }}</h3>
+        <p class="produk-card__desc">{{ item.deskripsi }}</p>
+        <div class="swatches">
+          {% for v in item.varian_warna %}
+          <span class="swatch" style="background:{{ warna_hex.get(v.warna, '#94A3B8') }}" title="{{ v.warna }}"></span>
+          {% endfor %}
+        </div>
+        <p class="produk-card__warna">{{ item.varian_warna | map(attribute='warna') | join(', ') }}</p>
+        <span class="price">mulai {{ item.varian_warna[0].harga_sewa_per_hari | rupiah }}/hari</span>
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+
+  <div class="tape-divider" aria-hidden="true"><svg viewBox="0 0 1200 24" preserveAspectRatio="none"><line x1="0" y1="12" x2="1200" y2="12"/></svg></div>
+
+  <section id="paket" class="section reveal">
+    <p class="eyebrow">Paket Sewa</p>
+    <h2 class="section__title">Pilih paket sesuai kebutuhan</h2>
+    <div class="paket-grid">
+      {% for p in paket %}
+      <article class="paket-card">
+        <h3>{{ p.nama_paket }}</h3>
+        <span class="price">{{ p.harga_sewa_per_hari | rupiah }}/hari</span>
+        {% if p.catatan %}<p class="paket-card__note">{{ p.catatan }}</p>{% endif %}
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+
+  <div class="tape-divider" aria-hidden="true"><svg viewBox="0 0 1200 24" preserveAspectRatio="none"><line x1="0" y1="12" x2="1200" y2="12"/></svg></div>
+
+  <section id="cara-sewa" class="section reveal">
+    <p class="eyebrow">Cara Sewa</p>
+    <h2 class="section__title">Syarat &amp; alur sewa</h2>
+    <ol class="steps">
+      {% for syarat in info.syarat_sewa %}
+      <li><span class="steps__num">{{ "%02d"|format(loop.index) }}</span><p>{{ syarat }}</p></li>
+      {% endfor %}
+    </ol>
+    <p class="steps__note">Durasi sewa minimal {{ info.durasi_sewa.minimal_hari }} hari, maksimal {{ info.durasi_sewa.maksimal_hari }} hari. {{ info.durasi_sewa.keterangan }}</p>
+  </section>
+
+  <div class="tape-divider" aria-hidden="true"><svg viewBox="0 0 1200 24" preserveAspectRatio="none"><line x1="0" y1="12" x2="1200" y2="12"/></svg></div>
+
+  <section id="testimoni" class="section reveal">
+    <p class="eyebrow">Testimoni</p>
+    <h2 class="section__title">Kata mereka yang sudah sewa</h2>
+    <p class="section__note">*Contoh testimoni &mdash; ganti dengan ulasan asli pelanggan kamu.</p>
+    <div class="testi-grid">
+      <blockquote class="testi"><span class="testi__avatar">D</span><p>&ldquo;Jasnya rapi banget buat wisuda, tanya-tanya ukuran lewat chat aja udah kejawab jelas.&rdquo;</p><cite>&mdash; Dian</cite></blockquote>
+      <blockquote class="testi"><span class="testi__avatar">F</span><p>&ldquo;Milih warna gampang karena bisa lihat pilihannya langsung, sampai toko tinggal fitting.&rdquo;</p><cite>&mdash; Fajar</cite></blockquote>
+      <blockquote class="testi"><span class="testi__avatar">R</span><p>&ldquo;Prosesnya jelas dari awal, jadi nggak bingung soal DP dan pengembalian.&rdquo;</p><cite>&mdash; Rani</cite></blockquote>
+    </div>
+  </section>
+
+  <div class="tape-divider" aria-hidden="true"><svg viewBox="0 0 1200 24" preserveAspectRatio="none"><line x1="0" y1="12" x2="1200" y2="12"/></svg></div>
+
+  <section id="faq" class="section reveal">
+    <p class="eyebrow">FAQ</p>
+    <h2 class="section__title">Pertanyaan yang sering ditanyakan</h2>
+    <div class="faq-list">
+      {% for item in faq %}
+      <details class="faq-item">
+        <summary>{{ item.q }}</summary>
+        <p>{{ item.a }}</p>
+      </details>
+      {% endfor %}
+    </div>
+    <p class="faq-cta">Nggak nemu jawabannya? <button class="link-btn" id="faqChatBtn">Tanya chatbot kami</button></p>
+  </section>
+
+  <div class="tape-divider" aria-hidden="true"><svg viewBox="0 0 1200 24" preserveAspectRatio="none"><line x1="0" y1="12" x2="1200" y2="12"/></svg></div>
+
+  <section id="lokasi" class="section section--lokasi reveal">
+    <p class="eyebrow">Lokasi &amp; Kontak</p>
+    <h2 class="section__title">Datang atau hubungi kami</h2>
+    <div class="lokasi-box">
+      <p class="lokasi-address">{{ info.alamat }}</p>
+      <p class="lokasi-hours">{{ info.jam_operasional }} &middot; Kontak: {{ info.kontak }}</p>
+      <p class="lokasi-hours">Pembayaran: {{ info.metode_pembayaran | join(', ') }}</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="footer__brand">{{ logo_mark(28) }}<span>{{ shop_name }}</span></div>
+  {% if info.media_sosial %}
+  <div class="footer__social">
+    {% if info.media_sosial.instagram %}<span>IG {{ info.media_sosial.instagram }}</span>{% endif %}
+    {% if info.media_sosial.tiktok %}<span>TikTok {{ info.media_sosial.tiktok }}</span>{% endif %}
+    {% if info.media_sosial.whatsapp_business %}<span>WA {{ info.media_sosial.whatsapp_business }}</span>{% endif %}
+  </div>
+  {% endif %}
+  <p>&copy; 2026 {{ shop_name }}</p>
+</footer>
+
+<!-- Tombol chat mengambang -->
+<button id="chatFab" class="chat-fab" aria-label="Buka chat">
+  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+  </svg>
+</button>
+
+<div id="chatOverlay" class="chat-overlay" hidden></div>
+
+<div id="chatDrawer" class="room room--drawer" hidden>
+
+  <header class="room__header">
+    <div class="header__mark">
+        <img
+            src="{{ url_for('static', filename='assets/logo.jfif') }}"
+            class="logo-chat"
+        >
+    </div>
+    <div class="header__text">
+      <h1>{{ shop_name }}</h1>
+      <p class="header__tagline">Asisten Chat &middot; Offline Mode</p>
+    </div>
+    <button id="chatClose" class="icon-btn" aria-label="Tutup chat">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </header>
+
+  <input type="hidden" id="modelInput" value="{{ default_model }}">
+  <input type="hidden" id="tempInput" value="0.5">
+
+  <main id="chatLog" class="chat-log">
+    <div class="msg msg--assistant">
+      <div class="msg__bubble">
+        Halo! Mau tanya soal ukuran, warna, harga, atau cara sewa jas di {{ shop_name }}? Langsung tulis aja di bawah.
+      </div>
+    </div>
+  </main>
+
+  <form id="chatForm" class="composer">
+    <textarea id="messageInput" placeholder="Ketik pesan untuk konsultasi jas Anda..." rows="1" autocomplete="off"></textarea>
+    <button type="submit" id="sendBtn" class="send-btn" aria-label="Kirim pesan">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="22" y1="2" x2="11" y2="13"></line>
+        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+      </svg>
+    </button>
+  </form>
+
+  <p class="status-line" id="statusLine"></p>
+  <button id="resetBtn" class="reset-link" type="button">Mulai percakapan baru</button>
+</div>
+
+<script src="{{ url_for('static', filename='js/site.js') }}"></script>
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+</body>
+</html>
