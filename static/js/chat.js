@@ -36,59 +36,15 @@
   const tempInput = document.getElementById("tempInput");
   const resetBtn = document.getElementById("resetBtn");
 
-  // Balasan chatbot ditampilkan lewat innerHTML (bukan textContent) supaya
-  // gambar (barcode QRIS) dan link (WhatsApp) bisa tampil/diklik langsung.
-  // escapeHtml() WAJIB dijalankan dulu sebelum linkify supaya teks dari
-  // user/bot tidak bisa menyuntik HTML/script (XSS) — baru setelah itu
-  // markdown gambar & URL polos diubah jadi tag <img>/<a>.
-  function escapeHtml(str) {
-    return str
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#39;");
-  }
-
-  function linkify(text) {
-    const escaped = escapeHtml(text);
-
-    // Gambar (mis. barcode/QRIS): ![alt](/path/gambar.png). Diproses lebih
-    // dulu dan ditaruh sementara di array `images`, digantikan token unik,
-    // supaya URL di dalam tanda kurungnya TIDAK ikut dobel di-linkify oleh
-    // urlPattern di bawah, lalu dikembalikan lagi di akhir.
-    const images = [];
-    const imgPattern = /!\[([^\]]*)\]\((\/[^\s)]+)\)/g;
-    const withImgTokens = escaped.replace(imgPattern, (_match, alt, src) => {
-      const token = `\u0000IMG${images.length}\u0000`;
-      images.push(
-        `<img src="${src}" alt="${alt}" class="msg__img" loading="lazy">`,
-      );
-      return token;
-    });
-
-    const urlPattern = /(https?:\/\/[^\s<]+)/g;
-    const withLinks = withImgTokens.replace(urlPattern, (url) => {
-      // jangan ikut-ikutkan tanda baca penutup kalimat (. , ) ! ?) ke dalam link
-      const trailingMatch = url.match(/[).,!?]+$/);
-      let clean = url;
-      let trailing = "";
-      if (trailingMatch) {
-        trailing = trailingMatch[0];
-        clean = url.slice(0, -trailing.length);
-      }
-      return `<a href="${clean}" target="_blank" rel="noopener noreferrer">${clean}</a>${trailing}`;
-    });
-
-    const withBreaks = withLinks.replace(/\n/g, "<br>");
-    return withBreaks.replace(
-      /\u0000IMG(\d+)\u0000/g,
-      (_m, i) => images[Number(i)],
-    );
-  }
+  // Data toko (dikirim dari server lewat hidden input di template) buat
+  // bikin link WA / Maps yang bisa diklik & gambar QRIS di dalam chat.
+  const waLink = document.getElementById("waLinkInput")?.value || "";
+  const mapsLink = document.getElementById("mapsLinkInput")?.value || "";
+  const qrisImg = document.getElementById("qrisImgInput")?.value || "";
+  const alamatText = document.getElementById("alamatTextInput")?.value || "";
 
   const STORAGE_KEY = "sewa_jas_chat_history";
-  let history = loadHistory(); // [{role: 'user'|'assistant', content: '...'}]
+  let history = loadHistory(); // [{role: 'user'|'assistant', content: '...', action?: 'qris'|'alamat'|'kontak'}]
 
   function loadHistory() {
     try {
@@ -107,6 +63,70 @@
     }
   }
 
+  function escapeHtml(str) {
+    return str.replace(/[&<>"']/g, (c) => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+    }[c]));
+  }
+
+  // Ubah teks jawaban asisten jadi HTML yang aman, sambil mengubah:
+  // - alamat toko  -> link Google Maps yang bisa diklik
+  // - nomor WA/HP  -> link wa.me yang bisa diklik
+  function linkifyText(rawText) {
+    let escaped = escapeHtml(rawText);
+
+    if (alamatText && mapsLink) {
+      const escapedAlamat = escapeHtml(alamatText);
+      if (escaped.includes(escapedAlamat)) {
+        escaped = escaped.split(escapedAlamat).join(
+          `<a href="${mapsLink}" target="_blank" rel="noopener" class="chat-link chat-link--map"> ${escapedAlamat}</a>`
+        );
+      }
+    }
+
+    // Cocokkan format nomor HP/WA Indonesia: 08xx-xxxx-xxxx, 08xxxxxxxxxx, +62 8xx..., 628xx...
+    const phoneRegex = /(?:\+62|62|0)8[0-9](?:[\s-]?[0-9]){7,10}/g;
+    escaped = escaped.replace(phoneRegex, (match) => {
+      let digits = match.replace(/\D/g, "");
+      if (digits.startsWith("0")) digits = "62" + digits.slice(1);
+      else if (!digits.startsWith("62")) digits = "62" + digits;
+      return `<a href="https://wa.me/${digits}" target="_blank" rel="noopener" class="chat-link chat-link--wa"> ${match}</a>`;
+    });
+
+    return escaped;
+  }
+
+  // Tempel elemen interaktif tambahan di bawah bubble asisten sesuai
+  // jenis pertanyaannya: gambar QRIS + tombol konfirmasi WA, tombol buka
+  // Maps, atau tombol chat WA.
+  function appendActionExtras(wrap, action) {
+    if (!action || !wrap) return;
+    const extras = document.createElement("div");
+    extras.className = "msg__extras";
+
+    if (action === "qris" && qrisImg) {
+      extras.innerHTML = `
+        <img src="${qrisImg}" alt="QRIS Pembayaran" class="qris-img" loading="lazy">
+        <a href="${waLink}" target="_blank" rel="noopener" class="chat-action-btn chat-action-btn--wa">✅ Sudah scan &amp; bayar? Konfirmasi via WhatsApp</a>
+      `;
+    } else if (action === "alamat" && mapsLink) {
+      extras.innerHTML = `<a href="${mapsLink}" target="_blank" rel="noopener" class="chat-action-btn">📍 Buka lokasi di Google Maps</a>`;
+    } else if (action === "kontak" && waLink) {
+      extras.innerHTML = `<a href="${waLink}" target="_blank" rel="noopener" class="chat-action-btn chat-action-btn--wa">💬 Chat Admin via WhatsApp</a>`;
+    } else {
+      return;
+    }
+    wrap.appendChild(extras);
+  }
+
+  // Selesaikan bubble asisten: ganti teks polos jadi HTML dengan link yang
+  // bisa diklik, lalu tempel elemen tambahan (QRIS/Maps/WA) kalau ada.
+  function finalizeAssistantMessage(bubble, text, action) {
+    bubble.innerHTML = linkifyText(text);
+    appendActionExtras(bubble.parentElement, action);
+    chatLog.scrollTop = chatLog.scrollHeight;
+  }
+
   function renderHistory() {
     chatLog.innerHTML = "";
     if (history.length === 0) {
@@ -114,7 +134,10 @@
       return;
     }
     for (const m of history) {
-      appendBubble(m.role, m.content, false);
+      const bubble = appendBubble(m.role, m.content, false);
+      if (m.role === "assistant") {
+        finalizeAssistantMessage(bubble, m.content, m.action || "");
+      }
     }
     chatLog.scrollTop = chatLog.scrollHeight;
   }
@@ -122,10 +145,13 @@
   function appendBubble(role, text, animate = true) {
     const wrap = document.createElement("div");
     wrap.className = `msg msg--${role}`;
+    const col = document.createElement("div");
+    col.className = "msg__col";
     const bubble = document.createElement("div");
     bubble.className = "msg__bubble";
-    bubble.innerHTML = linkify(text);
-    wrap.appendChild(bubble);
+    bubble.textContent = text;
+    col.appendChild(bubble);
+    wrap.appendChild(col);
     chatLog.appendChild(wrap);
     if (animate) chatLog.scrollTop = chatLog.scrollHeight;
     return bubble;
@@ -159,6 +185,7 @@
 
     const assistantBubble = appendBubble("assistant", "", true);
     assistantBubble.classList.add("typing");
+    let chatAction = "";
     try {
       const resp = await fetch("/api/chat", {
         method: "POST",
@@ -175,6 +202,10 @@
         throw new Error(`HTTP ${resp.status}`);
       }
 
+      // Header dari server yang bilang apakah jawaban ini perlu ditempeli
+      // gambar QRIS, tombol Maps, atau tombol WA.
+      chatAction = resp.headers.get("X-Chat-Action") || "";
+
       const reader = resp.body.getReader();
       const decoder = new TextDecoder("utf-8");
       let fullText = "";   // teks lengkap yang sudah diterima dari server
@@ -190,7 +221,7 @@
         while (!streamDone || shownText.length < fullText.length) {
           if (shownText.length < fullText.length) {
             shownText += fullText[shownText.length];
-            assistantBubble.innerHTML = linkify(shownText);
+            assistantBubble.textContent = shownText;
             chatLog.scrollTop = chatLog.scrollHeight;
             await new Promise((r) => setTimeout(r, CHAR_DELAY_MS));
           } else {
@@ -209,13 +240,14 @@
       await revealPromise; // tunggu semua karakter selesai ditampilin
 
       assistantBubble.classList.remove("typing");
-      history.push({ role: "assistant", content: fullText });
+      finalizeAssistantMessage(assistantBubble, fullText, chatAction);
+      history.push({ role: "assistant", content: fullText, action: chatAction });
       saveHistory();
       statusLine.textContent = "";
     } catch (err) {
       assistantBubble.classList.remove("typing");
       assistantBubble.textContent =
-        "⚠️ Gagal terhubung ke server. Pastikan aplikasi Flask (python app.py) dan Ollama sama-sama sedang berjalan.";
+        "⚠️ Gagal terhubung ke server. Pastikan aplikasi Flask (python run.py) dan Ollama sama-sama sedang berjalan.";
       statusLine.textContent = "Terjadi kesalahan koneksi.";
     } finally {
       sendBtn.disabled = false;

@@ -1,0 +1,23 @@
+{% extends "admin/base.html" %}
+{% block title %}Produk & Stok{% endblock %}
+{% block content %}
+<div class="admin-header admin-header-row">
+  <div>
+    <h1>Produk &amp; Stok</h1>
+    <p class="admin-muted">Pilih kategori buat update deskripsi, warna, harga, dan stok per ukuran.</p>
+  </div>
+  <a href="{{ url_for('admin_produk_baru') }}" class="admin-btn admin-btn-primary">+ Kategori baru</a>
+</div>
+
+<div class="admin-card-grid">
+  {% for kode, p in produk.items() %}
+  <a href="{{ url_for('admin_produk_edit', kategori=kode) }}" class="admin-produk-card">
+    <div class="admin-produk-card-title">{{ label.get(kode, kode) }}</div>
+    <div class="admin-produk-card-desc">{{ p.deskripsi }}</div>
+    <div class="admin-produk-card-meta">
+      <span>{{ p.varian_warna|length }} varian warna</span>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+{% endblock %}

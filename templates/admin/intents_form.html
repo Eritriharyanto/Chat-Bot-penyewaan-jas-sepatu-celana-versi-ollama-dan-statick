@@ -1,0 +1,36 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ 'Tambah FAQ' if mode == 'baru' else 'Edit: ' + intent.intent }}{% endblock %}
+{% block content %}
+<div class="admin-header">
+  <a href="{{ url_for('admin_intents_list') }}" class="admin-back">&larr; Kembali ke daftar FAQ</a>
+  <h1>{{ 'Tambah FAQ Baru' if mode == 'baru' else 'Edit FAQ: ' + intent.intent }}</h1>
+</div>
+
+<form method="POST" class="admin-card admin-form">
+  {% if mode == 'baru' %}
+  <label>Nama intent (huruf kecil, tanpa spasi — misal: <code>tanya_ongkir</code>)
+    <input type="text" name="intent" required pattern="[a-z0-9_]+" placeholder="tanya_ongkir">
+  </label>
+  {% else %}
+  <label>Nama intent
+    <input type="text" value="{{ intent.intent }}" disabled>
+    <span class="admin-hint">Nama intent tidak bisa diubah setelah dibuat.</span>
+  </label>
+  {% endif %}
+
+  <label>Kata kunci pemicu (pisahkan dengan koma — kalau pesan user mengandung salah satu kata ini, chatbot langsung jawab pakai jawaban di bawah, tanpa mikir ke AI)
+    <input type="text" name="keywords" value="{{ intent.keywords | join(', ') if intent and intent.keywords else '' }}" placeholder="ongkir, biaya kirim, biaya antar">
+    <span class="admin-hint">Boleh dikosongkan — kalau kosong, chatbot akan coba jawab sendiri pakai AI berdasarkan gaya bahasa contoh di bawah (kurang pasti dibanding kata kunci).</span>
+  </label>
+
+  <label>Contoh pertanyaan (satu baris = satu contoh, isi minimal 1)
+    <textarea name="contoh_pertanyaan" rows="5" required placeholder="berapa ongkir ke luar kota&#10;biaya antar berapa min">{{ intent.contoh_pertanyaan | join('\n') if intent else '' }}</textarea>
+  </label>
+
+  <label>Jawaban default (ini yang akan langsung dikirim ke user kalau kata kunci cocok)
+    <textarea name="jawaban_default" rows="5" required placeholder="Untuk ongkir...">{{ intent.jawaban_default if intent else '' }}</textarea>
+  </label>
+
+  <button type="submit" class="admin-btn admin-btn-primary">{{ 'Tambah FAQ' if mode == 'baru' else 'Simpan perubahan' }}</button>
+</form>
+{% endblock %}

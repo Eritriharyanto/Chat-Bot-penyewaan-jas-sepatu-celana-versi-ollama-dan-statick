@@ -1,0 +1,49 @@
+{% extends "admin/base.html" %}
+{% block title %}FAQ / Jawaban Chatbot{% endblock %}
+{% block content %}
+<div class="admin-header admin-header-row">
+  <div>
+    <h1>FAQ / Jawaban Chatbot</h1>
+    <p class="admin-muted">
+      {{ total }} total. Intent dengan tanda <span class="admin-badge admin-badge-custom">custom</span> punya
+      kata kunci pemicu sendiri (dibuat lewat panel ini). Intent tanpa tanda itu punya kata kunci bawaan
+      dari developer, jawabannya tetap bisa diedit di sini.
+    </p>
+  </div>
+  <a href="{{ url_for('admin_intents_baru') }}" class="admin-btn admin-btn-primary">+ Tambah FAQ baru</a>
+</div>
+
+<form method="GET" class="admin-search-form">
+  <input type="text" name="q" value="{{ q }}" placeholder="Cari intent, pertanyaan, atau jawaban...">
+  <button type="submit" class="admin-btn admin-btn-secondary">Cari</button>
+  {% if q %}<a href="{{ url_for('admin_intents_list') }}" class="admin-btn admin-btn-ghost">Reset</a>{% endif %}
+</form>
+
+<div class="admin-card">
+  <table class="admin-table admin-table-intents">
+    <thead>
+      <tr><th>Intent</th><th>Contoh pertanyaan</th><th>Jawaban</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for i in intents %}
+      <tr>
+        <td>
+          {{ i.intent }}
+          {% if i.keywords %}<span class="admin-badge admin-badge-custom">custom</span>{% endif %}
+        </td>
+        <td class="admin-table-truncate">{{ i.contoh_pertanyaan[0] }}</td>
+        <td class="admin-table-truncate">{{ i.jawaban_default }}</td>
+        <td class="admin-table-actions">
+          <a href="{{ url_for('admin_intents_edit', nama=i.intent) }}" class="admin-btn admin-btn-secondary admin-btn-small">Edit</a>
+          {% if i.intent != 'tidak_dikenali' %}
+          <form method="POST" action="{{ url_for('admin_intents_hapus', nama=i.intent) }}" onsubmit="return confirm('Hapus intent {{ i.intent }}?');">
+            <button type="submit" class="admin-btn admin-btn-danger admin-btn-small">Hapus</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

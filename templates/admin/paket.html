@@ -1,0 +1,51 @@
+{% extends "admin/base.html" %}
+{% block title %}Paket Sewa{% endblock %}
+{% block content %}
+<div class="admin-header">
+  <h1>Paket Sewa</h1>
+  <p class="admin-muted">Kelola harga paket gabungan (jas + celana + sepatu, dll).</p>
+</div>
+
+<div class="admin-card">
+  <table class="admin-table">
+    <thead>
+      <tr><th>Nama paket</th><th>Harga/hari</th><th>Catatan</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for p in paket %}
+      <tr>
+        <td colspan="4" class="admin-table-formcell">
+        <form method="POST" class="admin-table-row-form" onsubmit="return this.dataset.action !== 'hapus' || confirm('Hapus paket {{ p.nama_paket }}?');" data-action="">
+          <input type="hidden" name="idx" value="{{ loop.index0 }}">
+          <span><input type="text" name="nama_paket" value="{{ p.nama_paket }}" required></span>
+          <span><input type="number" name="harga_sewa_per_hari" value="{{ p.harga_sewa_per_hari }}" min="0" step="1000" required></span>
+          <span><input type="text" name="catatan" value="{{ p.catatan or '' }}" placeholder="opsional"></span>
+          <span class="admin-table-actions">
+            <button type="submit" name="action" value="simpan" class="admin-btn admin-btn-secondary admin-btn-small">Simpan</button>
+            <button type="submit" name="action" value="hapus" class="admin-btn admin-btn-danger admin-btn-small" onclick="this.form.dataset.action='hapus'">Hapus</button>
+          </span>
+        </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="admin-card">
+  <h2>Tambah paket baru</h2>
+  <form method="POST" class="admin-form admin-form-row">
+    <input type="hidden" name="action" value="tambah">
+    <label>Nama paket
+      <input type="text" name="nama_paket" placeholder="misal: Paket Jas + Dasi" required>
+    </label>
+    <label>Harga/hari (Rp)
+      <input type="number" name="harga_sewa_per_hari" min="0" step="1000" value="150000" required>
+    </label>
+    <label>Catatan (opsional)
+      <input type="text" name="catatan" placeholder="misal: warna dasi menyesuaikan warna jas">
+    </label>
+    <button type="submit" class="admin-btn admin-btn-primary">Tambah paket</button>
+  </form>
+</div>
+{% endblock %}

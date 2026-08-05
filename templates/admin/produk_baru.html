@@ -1,0 +1,19 @@
+{% extends "admin/base.html" %}
+{% block title %}Kategori Produk Baru{% endblock %}
+{% block content %}
+<div class="admin-header">
+  <a href="{{ url_for('admin_produk_list') }}" class="admin-back">&larr; Kembali ke daftar produk</a>
+  <h1>Tambah Kategori Produk</h1>
+  <p class="admin-muted">Buat kategori baru (misalnya "topi" atau "kemeja"). Setelah dibuat, kamu bisa tambahkan varian warna dan stoknya.</p>
+</div>
+
+<form method="POST" class="admin-card admin-form">
+  <label>Kode kategori (huruf kecil, tanpa spasi — misal: <code>topi</code>)
+    <input type="text" name="kode" required pattern="[a-z0-9_]+" placeholder="topi">
+  </label>
+  <label>Deskripsi singkat
+    <textarea name="deskripsi" rows="3" placeholder="Topi formal pria/wanita, cocok buat acara resmi"></textarea>
+  </label>
+  <button type="submit" class="admin-btn admin-btn-primary">Buat kategori</button>
+</form>
+{% endblock %}

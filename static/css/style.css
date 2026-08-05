@@ -615,8 +615,13 @@ a { color: inherit; }
 .msg--user { justify-content: flex-end; }
 .msg--assistant { justify-content: flex-start; }
 
-.msg__bubble {
+.msg__col {
+  display: flex;
+  flex-direction: column;
   max-width: 88%;
+}
+
+.msg__bubble {
   padding: 11px 15px;
   font-size: 0.92rem;
   line-height: 1.5;
@@ -627,18 +632,6 @@ a { color: inherit; }
 .msg--assistant .msg__bubble { background: var(--msg-assistant-bg); color: var(--msg-assistant-text); border-radius: 16px 16px 16px 4px; }
 .msg--user .msg__bubble { background: var(--msg-user-bg); color: var(--msg-user-text); border-radius: 16px 16px 4px 16px; }
 
-.msg__img {
-  display: block;
-  max-width: 200px;
-  width: 100%;
-  height: auto;
-  margin: 8px 0;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  background: #fff;
-  padding: 8px;
-}
-
 .msg__bubble.typing::after {
   content: "\25CF\25CF\25CF";
   animation: typing 1.5s infinite;
@@ -647,6 +640,52 @@ a { color: inherit; }
   letter-spacing: 2px;
 }
 @keyframes typing { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
+
+/* Link WA / Maps yang otomatis muncul di dalam teks jawaban chatbot */
+.chat-link {
+  color: var(--brand-primary);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.msg--assistant .chat-link { color: var(--brand-primary); }
+.chat-link--wa { color: #16A34A; }
+.chat-link--map { color: var(--brand-primary); }
+
+/* Elemen tambahan di bawah bubble asisten: gambar QRIS & tombol aksi */
+.msg__extras {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.qris-img {
+  width: 100%;
+  max-width: 260px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.chat-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: 999px;
+  background: var(--brand-primary);
+  color: #FFFFFF;
+  font-family: var(--font-body);
+  font-size: 0.84rem;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+  transition: opacity 0.15s ease;
+}
+.chat-action-btn:hover { opacity: 0.85; }
+.chat-action-btn--wa { background: #16A34A; }
 
 .composer {
   display: flex;
