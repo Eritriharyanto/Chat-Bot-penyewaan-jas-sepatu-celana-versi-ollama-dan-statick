@@ -21,7 +21,8 @@ gear di pojok kanan atas aplikasi).
 
 ## 3. Install dependency Python
 
-Pastikan Python 3.9+ sudah terpasang. Di folder project ini:
+Pastikan Python 3.10+ sudah terpasang (kode ini pakai sintaks `str | None`).
+Di folder project ini:
 
 ```bash
 pip install -r requirements.txt
@@ -30,7 +31,7 @@ pip install -r requirements.txt
 ## 4. Jalankan aplikasi
 
 ```bash
-python app.py
+python run.py
 ```
 
 Buka browser ke **http://localhost:5000**.
@@ -38,34 +39,84 @@ Buka browser ke **http://localhost:5000**.
 ## Struktur folder
 
 ```
-chatbot-sewa-jas-flask/
-├── app.py                 # Backend Flask + integrasi Ollama
+Chatbot7inc/
+├── run.py                      # Entry point ("python run.py" buat start server)
 ├── requirements.txt
-├── intents.json           # Contoh Q&A per intent (referensi gaya bicara)
-├── knowledge_base.json    # Data toko (harga, ukuran, kebijakan, dll)
+├── data/                       # Semua data yang bisa berubah saat runtime
+│   ├── knowledge_base.json     # Data toko (harga, ukuran, kebijakan, dll)
+│   ├── intents.json            # Q&A per intent (referensi gaya bicara + keyword FAQ)
+│   └── admin_config.json       # Login admin (username, password ter-hash, secret key)
 ├── templates/
-│   └── index.html         # Halaman chat
-└── static/
-    ├── css/style.css      # Tampilan (tema navy & brass, terinspirasi tailor shop)
-    └── js/chat.js          # Logic kirim pesan & streaming respons
+│   ├── index.html              # Halaman chat
+│   └── admin/                  # Semua halaman panel admin
+├── static/
+│   ├── css/style.css           # Tampilan chat (tema navy & brass, terinspirasi tailor shop)
+│   ├── css/admin.css           # Tampilan panel admin
+│   └── js/chat.js              # Logic kirim pesan & streaming respons
+└── chatbot/                    # Package Python utama (dulu semuanya 1 file app.py)
+    ├── __init__.py             # create_app() — application factory Flask
+    ├── config.py               # Konstanta & path (Ollama, file data, warna, dll)
+    ├── state.py                # Runtime state: KB, INTENTS, SYSTEM_PROMPT, dan
+    │                           # reload_runtime_state() buat refresh tanpa restart
+    ├── services/                # Logic bisnis murni (tidak menyentuh Flask request)
+    │   ├── formatting.py        # Format rupiah, link WA, link Maps, strip markdown
+    │   ├── kb_summary.py        # Ringkas knowledge base -> system prompt LLM + FAQ
+    │   ├── intent_matching.py   # Deteksi off-topic, intent sensitif, sapaan, FAQ statis/custom
+    │   ├── size_matching.py     # Cocokkan ukuran dari cm/kg, validasi jawaban LLM soal ukuran
+    │   ├── product_lookup.py    # Deteksi produk, warna/ukuran spesifik, stok, harga kombinasi
+    │   └── ollama_client.py     # Streaming response dari Ollama
+    └── routes/                  # Endpoint Flask, dipecah per fitur
+        ├── public.py             # "/" (landing page) & "/api/chat"
+        ├── auth.py               # Login/logout admin + decorator @admin_login_required
+        └── admin/                 # Semua route /admin/*, 1 file per submenu
+            ├── dashboard.py
+            ├── produk.py          # Kategori produk + varian warna/harga/stok
+            ├── paket.py           # Paket sewa kombinasi
+            ├── info_toko.py       # Info toko (form + mode lanjutan JSON mentah)
+            ├── intents.py         # CRUD FAQ/intent custom
+            └── pengaturan.py      # Ganti password admin
+```
+
+Nama endpoint Flask (dipakai `url_for(...)` di semua template) **tidak berubah
+sama sekali** dari versi 1-file sebelumnya — jadi kalau ada yang mau nambah
+halaman baru, tinggal ikuti pola modul yang sudah ada tanpa perlu sentuh
+template lama.
 
 ## Cara kerja singkat
 
 1. `knowledge_base.json` diringkas jadi teks (harga, ukuran, warna, kebijakan, dll)
-   saat server Flask start.
+   saat server Flask start (lihat `chatbot/services/kb_summary.py`).
 2. Beberapa contoh Q&A dari `intents.json` disertakan sebagai referensi gaya
    bicara (santai, ramah, ala admin online shop).
-3. Keduanya digabung jadi **system prompt**, dikirim ke model Ollama di setiap
-   giliran chat lewat endpoint `/api/chat`, yang men-streaming jawaban token demi
-   token ke browser (`fetch` + `ReadableStream` di `chat.js`).
-4. Kalau `knowledge_base.json` diubah (misal harga naik), tinggal restart
-   `python app.py` dan jawaban chatbot otomatis ikut update — tanpa training
-   ulang apa pun.
+3. Sebelum pesan user dikirim ke Ollama, ada rangkaian "guard" berbasis
+   keyword (`chatbot/services/intent_matching.py`, `size_matching.py`,
+   `product_lookup.py`) yang mencoba jawab langsung pakai data pasti —
+   lebih cepat, lebih akurat, dan gratis (gak perlu panggil LLM). Kalau
+   semua guard itu gak ada yang cocok, baru diserahkan ke Ollama.
 
-## Kalau ingin ganti isi data toko
+## Panel admin (`/admin`)
 
-Edit langsung `knowledge_base.json` (harga, ukuran, kebijakan, dll) dan
-`intents.json` (contoh pertanyaan & gaya jawaban), lalu restart `python app.py`.
+- **Produk & Stok** — update harga sewa, stok per ukuran, tambah/hapus varian
+  warna, tambah kategori produk baru
+- **Paket Sewa** — tambah/edit/hapus paket gabungan (Jas+Celana+Sepatu, dll)
+- **Info Toko** — jam operasional, kontak, alamat, syarat sewa, kebijakan
+  denda/DP, promo. Ada juga mode lanjutan (edit JSON mentah) buat field yang
+  jarang berubah dan belum ada form khususnya.
+- **FAQ / Jawaban Chatbot** — tambah pertanyaan baru beserta kata kunci
+  pemicunya. Begitu kata kunci itu muncul di chat user, chatbot langsung
+  jawab pakai jawaban yang diisi di panel — ga perlu mikir ke AI/Ollama sama
+  sekali, jadi lebih cepat & konsisten. Jawaban intent lama (bawaan
+  developer) juga bisa diedit di sini.
+
+Semua perubahan disimpan ke `data/knowledge_base.json` / `data/intents.json`
+dan langsung aktif di chatbot saat itu juga lewat `state.reload_runtime_state()`
+(server otomatis reload data-nya di belakang layar, tidak perlu restart Flask
+atau training ulang apa pun).
+
+> Catatan keamanan: panel ini pakai login sederhana (1 akun admin, tanpa
+> HTTPS bawaan). Kalau di-deploy ke internet (bukan cuma localhost), pasang
+> di belakang HTTPS/reverse proxy dan pastikan password sudah diganti dari
+> default.
 
 ## Troubleshooting
 
@@ -73,6 +124,6 @@ Edit langsung `knowledge_base.json` (harga, ukuran, kebijakan, dll) dan
   atau jalankan manual: `ollama serve`.
 - **Error model not found** → pastikan sudah `ollama pull <nama_model>` sesuai
   yang diisi di kolom "Model Ollama".
-- **Port 5000 sudah dipakai** → ubah baris terakhir `app.py`:
+- **Port 5000 sudah dipakai** → ubah baris terakhir `run.py`:
   `app.run(host="0.0.0.0", port=5001, debug=True)` lalu buka
   `http://localhost:5001`.

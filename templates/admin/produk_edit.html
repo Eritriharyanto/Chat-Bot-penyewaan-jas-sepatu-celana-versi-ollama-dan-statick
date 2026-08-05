@@ -1,0 +1,78 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ label }}{% endblock %}
+{% block content %}
+<div class="admin-header">
+  <a href="{{ url_for('admin_produk_list') }}" class="admin-back">&larr; Kembali ke daftar produk</a>
+  <h1>{{ label }}</h1>
+</div>
+
+<div class="admin-card">
+  <h2>Deskripsi</h2>
+  <form method="POST" class="admin-form">
+    <input type="hidden" name="action" value="simpan_deskripsi">
+    <textarea name="deskripsi" rows="2">{{ produk.deskripsi }}</textarea>
+    <button type="submit" class="admin-btn admin-btn-secondary">Simpan deskripsi</button>
+  </form>
+</div>
+
+<div class="admin-card">
+  <h2>Varian warna, harga &amp; stok</h2>
+  {% if not produk.varian_warna %}
+    <p class="admin-muted">Belum ada varian warna. Tambahkan lewat form di bawah.</p>
+  {% endif %}
+
+  {% for v in produk.varian_warna %}
+  <details class="admin-varian" {% if loop.first %}open{% endif %}>
+    <summary>
+      <span class="admin-swatch" style="background: {{ warna_hex.get(v.warna, '#9CA3AF') }}"></span>
+      <strong>{{ v.warna }}</strong>
+      <span class="admin-muted">— {{ v.harga_sewa_per_hari | rupiah }}/hari</span>
+    </summary>
+
+    <form method="POST" class="admin-form admin-varian-form">
+      <input type="hidden" name="action" value="simpan_varian">
+      <input type="hidden" name="warna" value="{{ v.warna }}">
+
+      <label>Harga sewa per hari (Rp)
+        <input type="number" name="harga" value="{{ v.harga_sewa_per_hari }}" min="0" step="1000" required>
+      </label>
+
+      <label class="admin-label-block">Stok per ukuran</label>
+      <div class="admin-stok-grid">
+        {% for ukuran in v.ukuran_tersedia %}
+        <label class="admin-stok-item">
+          <span>{{ ukuran }}</span>
+          <input type="number" name="stok_{{ ukuran }}" value="{{ v.stok_per_ukuran.get(ukuran, 0) }}" min="0">
+        </label>
+        {% endfor %}
+      </div>
+
+      <div class="admin-varian-actions">
+        <button type="submit" class="admin-btn admin-btn-primary">Simpan varian ini</button>
+      </div>
+    </form>
+
+    <form method="POST" class="admin-inline-form" onsubmit="return confirm('Hapus varian warna {{ v.warna }}? Ini tidak bisa dibatalkan.');">
+      <input type="hidden" name="action" value="hapus_varian">
+      <input type="hidden" name="warna" value="{{ v.warna }}">
+      <button type="submit" class="admin-btn admin-btn-danger admin-btn-small">Hapus varian ini</button>
+    </form>
+  </details>
+  {% endfor %}
+</div>
+
+<div class="admin-card">
+  <h2>Tambah varian warna baru</h2>
+  <form method="POST" class="admin-form">
+    <input type="hidden" name="action" value="tambah_varian">
+    <label>Nama warna
+      <input type="text" name="warna_baru" placeholder="misal: Merah Marun" required>
+    </label>
+    <label>Harga sewa per hari (Rp)
+      <input type="number" name="harga_baru" min="0" step="1000" value="150000" required>
+    </label>
+    <p class="admin-muted">Ukuran &amp; stok bisa diatur setelah varian dibuat (defaultnya stok 0 semua ukuran).</p>
+    <button type="submit" class="admin-btn admin-btn-primary">Tambah varian</button>
+  </form>
+</div>
+{% endblock %}

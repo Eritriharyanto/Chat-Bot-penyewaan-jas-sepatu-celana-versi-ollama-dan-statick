@@ -1,0 +1,22 @@
+{% extends "admin/base.html" %}
+{% block title %}Pengaturan Akun{% endblock %}
+{% block content %}
+<div class="admin-header">
+  <h1>Pengaturan Akun</h1>
+  <p class="admin-muted">Login sebagai: <strong>{{ username }}</strong></p>
+</div>
+
+<form method="POST" class="admin-card admin-form" style="max-width: 420px;">
+  <h2>Ganti password</h2>
+  <label>Password lama
+    <input type="password" name="password_lama" required>
+  </label>
+  <label>Password baru (minimal 8 karakter)
+    <input type="password" name="password_baru" required minlength="8">
+  </label>
+  <label>Ulangi password baru
+    <input type="password" name="password_ulang" required minlength="8">
+  </label>
+  <button type="submit" class="admin-btn admin-btn-primary">Ganti password</button>
+</form>
+{% endblock %}

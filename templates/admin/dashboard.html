@@ -1,0 +1,37 @@
+{% extends "admin/base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="admin-header">
+  <h1>Dashboard</h1>
+  <p class="admin-muted">Ringkasan data chatbot {{ shop_name }} saat ini.</p>
+</div>
+
+<div class="admin-stat-grid">
+  <div class="admin-stat-card">
+    <div class="admin-stat-num">{{ jumlah_kategori }}</div>
+    <div class="admin-stat-label">Kategori produk</div>
+  </div>
+  <div class="admin-stat-card">
+    <div class="admin-stat-num">{{ jumlah_produk }}</div>
+    <div class="admin-stat-label">Total varian warna</div>
+  </div>
+  <div class="admin-stat-card">
+    <div class="admin-stat-num">{{ jumlah_paket }}</div>
+    <div class="admin-stat-label">Paket sewa</div>
+  </div>
+  <div class="admin-stat-card">
+    <div class="admin-stat-num">{{ jumlah_intent }}</div>
+    <div class="admin-stat-label">Total FAQ / intent ({{ jumlah_intent_custom }} custom dari admin)</div>
+  </div>
+</div>
+
+<div class="admin-card">
+  <h2>Mulai dari sini</h2>
+  <ul class="admin-quicklinks">
+    <li><a href="{{ url_for('admin_produk_list') }}">Update stok &amp; harga produk</a> — paling sering dipakai buat sesuaikan stok harian.</li>
+    <li><a href="{{ url_for('admin_intents_list') }}">Tambah/edit jawaban FAQ chatbot</a> — buat pertanyaan baru yang belum ada jawabannya.</li>
+    <li><a href="{{ url_for('admin_paket') }}">Kelola paket sewa</a> — harga paket gabungan (jas + celana + sepatu, dll).</li>
+    <li><a href="{{ url_for('admin_info_toko') }}">Edit info toko</a> — jam operasional, kontak, alamat, promo.</li>
+  </ul>
+</div>
+{% endblock %}

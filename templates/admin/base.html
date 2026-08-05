@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Admin{% endblock %} — Panel Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body class="admin-body">
+  {% if session.get('admin_logged_in') %}
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+      <div class="admin-brand">
+        <img src="{{ url_for('static', filename='assets/logo.jfif') }}" alt="logo">
+        <div>
+          <div class="admin-brand-title">Panel Admin</div>
+          <div class="admin-brand-sub">{{ shop_name if shop_name is defined else '' }}</div>
+        </div>
+      </div>
+      <nav class="admin-nav">
+        <a href="{{ url_for('admin_dashboard') }}" class="{{ 'active' if request.endpoint == 'admin_dashboard' }}">Dashboard</a>
+        <a href="{{ url_for('admin_produk_list') }}" class="{{ 'active' if request.endpoint and request.endpoint.startswith('admin_produk') }}">Produk &amp; Stok</a>
+        <a href="{{ url_for('admin_paket') }}" class="{{ 'active' if request.endpoint == 'admin_paket' }}">Paket Sewa</a>
+        <a href="{{ url_for('admin_info_toko') }}" class="{{ 'active' if request.endpoint and request.endpoint.startswith('admin_info_toko') }}">Info Toko</a>
+        <a href="{{ url_for('admin_intents_list') }}" class="{{ 'active' if request.endpoint and request.endpoint.startswith('admin_intents') }}">FAQ / Jawaban Chatbot</a>
+        <a href="{{ url_for('admin_pengaturan') }}" class="{{ 'active' if request.endpoint == 'admin_pengaturan' }}">Pengaturan Akun</a>
+      </nav>
+      <div class="admin-sidebar-footer">
+        <a href="{{ url_for('index') }}" target="_blank">Lihat halaman chatbot ↗</a>
+        <a href="{{ url_for('admin_logout') }}" class="admin-logout">Keluar</a>
+      </div>
+    </aside>
+    <main class="admin-main">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="admin-flash-wrap">
+            {% for category, message in messages %}
+              <div class="admin-flash admin-flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+  {% else %}
+    {% block guest_content %}{% endblock %}
+  {% endif %}
+</body>
+</html>

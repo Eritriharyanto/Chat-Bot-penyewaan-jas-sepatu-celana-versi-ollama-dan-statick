@@ -1,0 +1,18 @@
+{% extends "admin/base.html" %}
+{% block title %}Info Toko — Mode Lanjutan{% endblock %}
+{% block content %}
+<div class="admin-header">
+  <a href="{{ url_for('admin_info_toko') }}" class="admin-back">&larr; Kembali ke form biasa</a>
+  <h1>Info Toko — Mode Lanjutan</h1>
+  <p class="admin-muted admin-warning-text">
+    Halaman ini buat mengedit SEMUA data info toko langsung dalam format JSON, termasuk field yang
+    tidak ada di form biasa (kebijakan pembatalan, layanan antar, dll). Hati-hati: kalau format JSON-nya
+    salah, penyimpanan akan ditolak. Kalau ragu, sebaiknya pakai form biasa saja.
+  </p>
+</div>
+
+<form method="POST" class="admin-card admin-form">
+  <textarea name="raw_json" rows="28" class="admin-json-editor" spellcheck="false">{{ raw_json }}</textarea>
+  <button type="submit" class="admin-btn admin-btn-primary">Simpan JSON</button>
+</form>
+{% endblock %}

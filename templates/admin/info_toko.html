@@ -1,0 +1,59 @@
+{% extends "admin/base.html" %}
+{% block title %}Info Toko{% endblock %}
+{% block content %}
+<div class="admin-header admin-header-row">
+  <div>
+    <h1>Info Toko</h1>
+    <p class="admin-muted">Field yang paling sering diubah. Field lain (kebijakan pembatalan, layanan antar, dll) ada di mode lanjutan.</p>
+  </div>
+  <a href="{{ url_for('admin_info_toko_lanjutan') }}" class="admin-btn admin-btn-secondary">Mode lanjutan (JSON)</a>
+</div>
+
+<form method="POST" class="admin-card admin-form">
+  <label>Nama usaha
+    <input type="text" name="nama_usaha" value="{{ info.nama_usaha }}" required>
+  </label>
+  <label>Deskripsi
+    <textarea name="deskripsi" rows="2">{{ info.deskripsi }}</textarea>
+  </label>
+  <div class="admin-form-2col">
+    <label>Jam operasional
+      <input type="text" name="jam_operasional" value="{{ info.jam_operasional }}">
+    </label>
+    <label>Kontak (nomor WhatsApp)
+      <input type="text" name="kontak" value="{{ info.kontak }}">
+    </label>
+  </div>
+  <label>Alamat
+    <textarea name="alamat" rows="2">{{ info.alamat }}</textarea>
+  </label>
+  <label>Metode pembayaran (pisahkan dengan koma)
+    <input type="text" name="metode_pembayaran" value="{{ info.metode_pembayaran | join(', ') }}">
+  </label>
+  <label>Syarat sewa (satu baris = satu syarat)
+    <textarea name="syarat_sewa" rows="4">{{ info.syarat_sewa | join('\n') }}</textarea>
+  </label>
+
+  <div class="admin-form-2col">
+    <label>Denda keterlambatan per hari (Rp)
+      <input type="number" name="denda_per_hari" value="{{ info.kebijakan_denda.denda_per_hari if info.kebijakan_denda else 0 }}" min="0" step="1000">
+    </label>
+    <label>DP minimal (%)
+      <input type="number" name="dp_minimal_persen" value="{{ info.kebijakan_dp.minimal_persen if info.kebijakan_dp else 0 }}" min="0" max="100">
+    </label>
+  </div>
+
+  <fieldset class="admin-fieldset">
+    <legend>Promo</legend>
+    <label class="admin-checkbox">
+      <input type="checkbox" name="promo_aktif" {% if info.promo and info.promo.aktif %}checked{% endif %}>
+      Ada promo aktif sekarang
+    </label>
+    <label>Keterangan promo
+      <textarea name="promo_keterangan" rows="2">{{ info.promo.keterangan if info.promo else '' }}</textarea>
+    </label>
+  </fieldset>
+
+  <button type="submit" class="admin-btn admin-btn-primary">Simpan perubahan</button>
+</form>
+{% endblock %}

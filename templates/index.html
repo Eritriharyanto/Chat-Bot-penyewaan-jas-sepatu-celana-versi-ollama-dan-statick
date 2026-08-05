@@ -204,9 +204,14 @@
     <p class="eyebrow">Lokasi &amp; Kontak</p>
     <h2 class="section__title">Datang atau hubungi kami</h2>
     <div class="lokasi-box">
-      <p class="lokasi-address">{{ info.alamat }}</p>
-      <p class="lokasi-hours">{{ info.jam_operasional }} &middot; Kontak: {{ info.kontak }}</p>
-      <p class="lokasi-hours">Pembayaran: {{ info.metode_pembayaran | join(', ') }}</p>
+      <p class="lokasi-address">
+        <a href="{{ maps_link }}" target="_blank" rel="noopener">{{ info.alamat }}</a>
+      </p>
+      <p class="lokasi-hours">
+        {{ info.jam_operasional }} &middot; Kontak:
+        <a href="{{ wa_link }}" target="_blank" rel="noopener">{{ info.kontak }}</a>
+      </p>
+      <p class="lokasi-hours">Pembayaran: {{ info.metode_pembayaran | join(', ') }}, QRIS</p>
     </div>
   </section>
 
@@ -255,6 +260,11 @@
 
   <input type="hidden" id="modelInput" value="{{ default_model }}">
   <input type="hidden" id="tempInput" value="0.5">
+  <input type="hidden" id="waLinkInput" value="{{ wa_link }}">
+  <input type="hidden" id="mapsLinkInput" value="{{ maps_link }}">
+  <input type="hidden" id="qrisImgInput" value="{{ qris_img }}">
+  <input type="hidden" id="kontakTextInput" value="{{ info.kontak }}">
+  <input type="hidden" id="alamatTextInput" value="{{ info.alamat }}">
 
   <main id="chatLog" class="chat-log">
     <div class="msg msg--assistant">
