@@ -1,0 +1,29 @@
+{% extends "admin/base.html" %}
+{% block title %}Riwayat Chat — {{ visitor.nama }}{% endblock %}
+{% block content %}
+<div class="admin-header admin-header-row">
+  <div>
+    <h1>{{ visitor.nama }}</h1>
+    <p class="admin-muted">
+      {{ visitor.nomor_telepon }} &middot; pertama chat {{ visitor.created_at | replace("T", " ") }}
+      &middot; terakhir aktif {{ visitor.last_seen_at | replace("T", " ") }}
+    </p>
+  </div>
+  <a href="{{ url_for('admin_riwayat_list') }}" class="admin-btn admin-btn-ghost">&larr; Kembali ke daftar</a>
+</div>
+
+<div class="admin-card admin-transcript-card">
+  <div class="chat-log chat-log--transcript">
+    {% for m in messages %}
+    <div class="msg msg--{{ 'user' if m.role == 'user' else 'assistant' }}">
+      <div class="msg__col">
+        <div class="msg__bubble">{{ m.content }}</div>
+        <div class="admin-transcript-time">{{ m.created_at | replace("T", " ") }}</div>
+      </div>
+    </div>
+    {% else %}
+    <p class="admin-muted">Belum ada pesan dari pengunjung ini.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

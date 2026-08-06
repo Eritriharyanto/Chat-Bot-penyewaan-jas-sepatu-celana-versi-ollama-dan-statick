@@ -238,6 +238,32 @@
 
 <div id="chatOverlay" class="chat-overlay" hidden></div>
 
+<!-- Gerbang identitas: wajib diisi sebelum chat bisa dipakai -->
+<div id="gateModal" class="gate-modal" hidden>
+  <div class="gate-modal__box">
+    <button id="gateClose" class="icon-btn gate-modal__close" aria-label="Tutup">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+    <img src="{{ url_for('static', filename='assets/logo.jfif') }}" class="gate-modal__logo" alt="{{ shop_name }}">
+    <h2>Mulai Chat dengan {{ shop_name }}</h2>
+    <p class="gate-modal__desc">Isi nama dan nomor telepon/WhatsApp kamu dulu ya, biar admin bisa hubungi balik kalau ada yang perlu ditindaklanjuti.</p>
+    <form id="gateForm" class="gate-form">
+      <label>
+        Nama
+        <input type="text" id="gateNama" name="nama" placeholder="Nama kamu" autocomplete="name" required>
+      </label>
+      <label>
+        Nomor Telepon / WhatsApp
+        <input type="tel" id="gateNomor" name="nomor_telepon" placeholder="08xxxxxxxxxx" autocomplete="tel" required>
+      </label>
+      <p class="gate-form__error" id="gateError" hidden></p>
+      <button type="submit" class="btn btn--primary gate-form__submit" id="gateSubmitBtn">Mulai Chat</button>
+    </form>
+  </div>
+</div>
+
 <div id="chatDrawer" class="room room--drawer" hidden>
 
   <header class="room__header">

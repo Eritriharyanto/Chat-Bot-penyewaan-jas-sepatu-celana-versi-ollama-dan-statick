@@ -33,7 +33,7 @@ def stream_ollama_response(
     sentence_buffer = ""
     last_sentence = None
     try:
-        with requests.post(OLLAMA_URL, json=payload, stream=True, timeout=180) as resp:
+        with requests.post(OLLAMA_URL, json=payload, stream=True, timeout=60) as resp:
             resp.raise_for_status()
             for line in resp.iter_lines():
                 if not line:
@@ -64,7 +64,7 @@ def stream_ollama_response(
             yield sentence_buffer
     except requests.exceptions.Timeout:
         yield (
-            "⚠️ Ollama kelamaan mikir (lebih dari 3 menit), jadi dihentikan. "
+            "⚠️ Ollama kelamaan mikir (lebih dari 1 menit), jadi dihentikan. "
             "Ini biasanya karena model masih loading pertama kali atau laptop "
             "lagi berat — coba tanya ulang, biasanya percobaan kedua lebih cepat."
         )

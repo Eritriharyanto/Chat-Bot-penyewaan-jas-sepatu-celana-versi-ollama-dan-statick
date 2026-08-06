@@ -1,0 +1,42 @@
+{% extends "admin/base.html" %}
+{% block title %}Riwayat Chat{% endblock %}
+{% block content %}
+<div class="admin-header admin-header-row">
+  <div>
+    <h1>Riwayat Chat</h1>
+    <p class="admin-muted">
+      {{ total }} pengunjung tercatat. Setiap orang wajib isi nama &amp; nomor telepon dulu sebelum bisa
+      chat, jadi semua percakapan di sini sudah terhubung ke identitasnya.
+    </p>
+  </div>
+</div>
+
+<form method="GET" class="admin-search-form">
+  <input type="text" name="q" value="{{ q }}" placeholder="Cari nama atau nomor telepon...">
+  <button type="submit" class="admin-btn admin-btn-secondary">Cari</button>
+  {% if q %}<a href="{{ url_for('admin_riwayat_list') }}" class="admin-btn admin-btn-ghost">Reset</a>{% endif %}
+</form>
+
+<div class="admin-card">
+  <table class="admin-table">
+    <thead>
+      <tr><th>Nama</th><th>Nomor Telepon</th><th>Jumlah Pesan</th><th>Terakhir Aktif</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for v in visitors %}
+      <tr>
+        <td>{{ v.nama }}</td>
+        <td>{{ v.nomor_telepon }}</td>
+        <td>{{ v.jumlah_pesan }}</td>
+        <td>{{ v.last_seen_at | replace("T", " ") }}</td>
+        <td class="admin-table-actions">
+          <a href="{{ url_for('admin_riwayat_detail', visitor_id=v.id) }}" class="admin-btn admin-btn-secondary admin-btn-small">Lihat percakapan</a>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="admin-table-empty">Belum ada pengunjung yang chat.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
