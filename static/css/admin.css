@@ -347,8 +347,22 @@
   align-items: center;
 }
 .admin-table-row-form input { width: 100%; }
+.admin-table-empty { text-align: center; color: var(--text-muted); padding: 24px 10px; }
 .admin-search-form { display: flex; gap: 8px; margin-bottom: 16px; max-width: 460px; }
 .admin-search-form input { flex: 1; padding: 9px 12px; border-radius: 8px; border: 1px solid var(--border); }
+
+/* ---------- Riwayat chat (transkrip percakapan) ---------- */
+.admin-transcript-card { padding: 0; overflow: hidden; }
+.chat-log--transcript {
+  max-height: 70vh;
+  padding: 20px;
+}
+.admin-transcript-time {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+.msg--user .admin-transcript-time { text-align: right; }
 
 .admin-badge {
   display: inline-block;

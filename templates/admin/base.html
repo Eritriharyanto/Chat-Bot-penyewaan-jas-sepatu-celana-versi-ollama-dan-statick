@@ -26,6 +26,7 @@
         <a href="{{ url_for('admin_paket') }}" class="{{ 'active' if request.endpoint == 'admin_paket' }}">Paket Sewa</a>
         <a href="{{ url_for('admin_info_toko') }}" class="{{ 'active' if request.endpoint and request.endpoint.startswith('admin_info_toko') }}">Info Toko</a>
         <a href="{{ url_for('admin_intents_list') }}" class="{{ 'active' if request.endpoint and request.endpoint.startswith('admin_intents') }}">FAQ / Jawaban Chatbot</a>
+        <a href="{{ url_for('admin_riwayat_list') }}" class="{{ 'active' if request.endpoint and request.endpoint.startswith('admin_riwayat') }}">Riwayat Chat</a>
         <a href="{{ url_for('admin_pengaturan') }}" class="{{ 'active' if request.endpoint == 'admin_pengaturan' }}">Pengaturan Akun</a>
       </nav>
       <div class="admin-sidebar-footer">

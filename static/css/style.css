@@ -520,6 +520,60 @@ a { color: inherit; }
 }
 .chat-overlay[hidden] { display: none; }
 
+/* ---------- Gerbang identitas (nama + nomor telepon sebelum chat) ---------- */
+.gate-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 61;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.gate-modal[hidden] { display: none; }
+.gate-modal__box {
+  position: relative;
+  background: var(--room-bg);
+  border-radius: 16px;
+  padding: 32px 28px;
+  max-width: 380px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(15,23,42,0.25);
+  text-align: center;
+}
+.gate-modal__close { position: absolute; top: 12px; right: 12px; }
+.gate-modal__logo { width: 48px; height: 48px; border-radius: 10px; margin-bottom: 12px; object-fit: cover; }
+.gate-modal__box h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.2rem;
+  margin: 0 0 8px;
+  color: var(--brand-primary);
+}
+.gate-modal__desc { color: var(--text-muted); font-size: 0.86rem; line-height: 1.5; margin: 0 0 20px; }
+.gate-form { display: flex; flex-direction: column; gap: 14px; text-align: left; }
+.gate-form label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.gate-form input {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  font-weight: 400;
+  color: var(--text);
+}
+.gate-form input:focus { outline: 2px solid var(--brand-accent); outline-offset: 1px; }
+.gate-form__error { color: #DC2626; font-size: 0.82rem; margin: 0; }
+.gate-form__submit { width: 100%; text-align: center; }
+.gate-form__submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
 /* ---------- Chat drawer (adapted from original full-page room) ---------- */
 .room--drawer {
   position: fixed;

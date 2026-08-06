@@ -10,6 +10,76 @@
     chatFab,
   ].filter(Boolean);
 
+  // ---------- Gerbang identitas (nama + nomor telepon) ----------
+  // Chat cuma boleh dipakai kalau browser ini sudah pernah isi nama &
+  // nomor telepon (dicek dari session di server, lihat /api/visitor/me).
+  // Begitu berhasil isi sekali, gerbang gak akan muncul lagi selama
+  // cookie session-nya masih ada.
+  const gateModal = document.getElementById("gateModal");
+  const gateForm = document.getElementById("gateForm");
+  const gateNama = document.getElementById("gateNama");
+  const gateNomor = document.getElementById("gateNomor");
+  const gateError = document.getElementById("gateError");
+  const gateSubmitBtn = document.getElementById("gateSubmitBtn");
+  const gateClose = document.getElementById("gateClose");
+
+  let isRegistered = false;
+
+  function openGate() {
+    gateModal.hidden = false;
+    chatOverlay.hidden = false;
+    gateNama?.focus();
+  }
+
+  function closeGate() {
+    gateModal.hidden = true;
+    chatOverlay.hidden = true;
+  }
+
+  async function checkVisitorStatus() {
+    try {
+      const resp = await fetch("/api/visitor/me");
+      const data = await resp.json();
+      isRegistered = !!data.registered;
+    } catch {
+      isRegistered = false;
+    }
+  }
+  checkVisitorStatus();
+
+  gateForm?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    gateError.hidden = true;
+    gateSubmitBtn.disabled = true;
+    try {
+      const resp = await fetch("/api/visitor", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nama: gateNama.value.trim(),
+          nomor_telepon: gateNomor.value.trim(),
+        }),
+      });
+      const data = await resp.json();
+      if (!resp.ok) {
+        gateError.textContent =
+          data.error || "Gagal menyimpan data, coba lagi.";
+        gateError.hidden = false;
+        return;
+      }
+      isRegistered = true;
+      closeGate();
+      openChat();
+    } catch {
+      gateError.textContent = "Gagal terhubung ke server. Coba lagi ya.";
+      gateError.hidden = false;
+    } finally {
+      gateSubmitBtn.disabled = false;
+    }
+  });
+
+  gateClose?.addEventListener("click", closeGate);
+
   function openChat() {
     chatDrawer.hidden = false;
     chatOverlay.hidden = false;
@@ -23,9 +93,25 @@
     chatFab.hidden = false;
   }
 
-  openTriggers.forEach((btn) => btn.addEventListener("click", openChat));
+  // Tombol "buka chat" gak langsung buka drawer -- kalau belum isi
+  // identitas, tampilkan gerbang dulu, chat drawer-nya baru kebuka
+  // otomatis setelah gerbangnya berhasil disubmit.
+  function handleOpenTrigger() {
+    if (isRegistered) {
+      openChat();
+    } else {
+      openGate();
+    }
+  }
+
+  openTriggers.forEach((btn) =>
+    btn.addEventListener("click", handleOpenTrigger),
+  );
   chatClose?.addEventListener("click", closeChat);
-  chatOverlay?.addEventListener("click", closeChat);
+  chatOverlay?.addEventListener("click", () => {
+    closeChat();
+    closeGate();
+  });
 
   const chatLog = document.getElementById("chatLog");
   const chatForm = document.getElementById("chatForm");
@@ -64,9 +150,17 @@
   }
 
   function escapeHtml(str) {
-    return str.replace(/[&<>"']/g, (c) => ({
-      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
-    }[c]));
+    return str.replace(
+      /[&<>"']/g,
+      (c) =>
+        ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;",
+        })[c],
+    );
   }
 
   // Ubah teks jawaban asisten jadi HTML yang aman, sambil mengubah:
@@ -78,9 +172,11 @@
     if (alamatText && mapsLink) {
       const escapedAlamat = escapeHtml(alamatText);
       if (escaped.includes(escapedAlamat)) {
-        escaped = escaped.split(escapedAlamat).join(
-          `<a href="${mapsLink}" target="_blank" rel="noopener" class="chat-link chat-link--map"> ${escapedAlamat}</a>`
-        );
+        escaped = escaped
+          .split(escapedAlamat)
+          .join(
+            `<a href="${mapsLink}" target="_blank" rel="noopener" class="chat-link chat-link--map"> ${escapedAlamat}</a>`,
+          );
       }
     }
 
@@ -130,7 +226,11 @@
   function renderHistory() {
     chatLog.innerHTML = "";
     if (history.length === 0) {
-      appendBubble("assistant", "Haiii, selamat datang! 👋 Mau tanya soal ukuran, warna, harga, atau cara sewa? Langsung tulis aja di bawah.", false);
+      appendBubble(
+        "assistant",
+        "Haiii, selamat datang! 👋 Mau tanya soal ukuran, warna, harga, atau cara sewa? Langsung tulis aja di bawah.",
+        false,
+      );
       return;
     }
     for (const m of history) {
@@ -198,6 +298,22 @@
         }),
       });
 
+      if (resp.status === 401) {
+        // Sesi identitas hilang di tengah jalan (mis. cookie kedaluwarsa) --
+        // minta isi ulang gerbang, pesan yang tadi diketik gak hilang.
+        isRegistered = false;
+        assistantBubble.classList.remove("typing");
+        assistantBubble.textContent =
+          "⚠️ Sesi kamu berakhir. Silakan isi ulang nama & nomor telepon buat lanjut chat.";
+        history.pop(); // batalkan pesan user yang barusan di-push, biar gak dobel
+        saveHistory();
+        renderHistory();
+        messageInput.value = text; // biar gak perlu ngetik ulang setelah isi gerbang lagi
+        autoResize();
+        openGate();
+        return;
+      }
+
       if (!resp.ok || !resp.body) {
         throw new Error(`HTTP ${resp.status}`);
       }
@@ -208,8 +324,8 @@
 
       const reader = resp.body.getReader();
       const decoder = new TextDecoder("utf-8");
-      let fullText = "";   // teks lengkap yang sudah diterima dari server
-      let shownText = "";  // teks yang sudah ditampilkan ke user, dikit demi dikit
+      let fullText = ""; // teks lengkap yang sudah diterima dari server
+      let shownText = ""; // teks yang sudah ditampilkan ke user, dikit demi dikit
       let streamDone = false;
 
       const CHAR_DELAY_MS = 20; // makin besar angkanya, makin pelan efek ketiknya
@@ -241,7 +357,11 @@
 
       assistantBubble.classList.remove("typing");
       finalizeAssistantMessage(assistantBubble, fullText, chatAction);
-      history.push({ role: "assistant", content: fullText, action: chatAction });
+      history.push({
+        role: "assistant",
+        content: fullText,
+        action: chatAction,
+      });
       saveHistory();
       statusLine.textContent = "";
     } catch (err) {

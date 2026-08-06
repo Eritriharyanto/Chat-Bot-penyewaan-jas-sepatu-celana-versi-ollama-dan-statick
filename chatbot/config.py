@@ -14,14 +14,15 @@ DATA_DIR = BASE_DIR / "data"
 KB_PATH = DATA_DIR / "knowledge_base.json"
 INTENTS_PATH = DATA_DIR / "intents.json"
 ADMIN_CONFIG_PATH = DATA_DIR / "admin_config.json"
+CHAT_DB_PATH = DATA_DIR / "chat_history.db"
 
 TEMPLATES_DIR = BASE_DIR / "templates"
 STATIC_DIR = BASE_DIR / "static"
 
 # ---------- Ollama ----------
 OLLAMA_URL = "http://localhost:11434/api/chat"
-DEFAULT_MODEL = "qwen2.5:1.5b"
-NUM_CTX = 8192
+DEFAULT_MODEL = "qwen2.5:0.5b"
+NUM_CTX = 3192
 DEFAULT_TEMPERATURE = 0.3
 DEFAULT_REPEAT_PENALTY = 1.3
 DEFAULT_MAX_TOKENS = 400

@@ -16,7 +16,7 @@ import secrets
 from flask import Flask
 from werkzeug.security import generate_password_hash
 
-from chatbot import config, state
+from chatbot import config, db, state
 from chatbot.services.formatting import rp
 
 
@@ -43,6 +43,7 @@ def create_app() -> Flask:
     app.secret_key = state.ADMIN_CONFIG["secret_key"]
 
     state.reload_runtime_state()
+    db.init_db()
 
     from chatbot.routes import register_routes
     register_routes(app)
