@@ -1,30 +1,49 @@
-{% extends "admin/base.html" %}
-{% block title %}Masuk{% endblock %}
-{% block guest_content %}
+{% extends "admin/base.html" %} {% block title %}Masuk{% endblock %} {% block
+guest_content %}
 <div class="admin-login-page">
   <div class="admin-login-card">
-    <img src="{{ url_for('static', filename='assets/logo.jfif') }}" alt="logo" class="admin-login-logo">
+    <img
+      src="{{ url_for('static', filename='assets/' + logo_filename) }}"
+      alt="logo"
+      class="admin-login-logo"
+    />
     <h1>Panel Admin</h1>
-    <p class="admin-login-sub">Masuk untuk mengelola produk, stok, dan jawaban chatbot.</p>
+    <p class="admin-login-sub">
+      Masuk untuk mengelola produk, stok, dan jawaban chatbot.
+    </p>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div class="admin-flash-wrap">
-          {% for category, message in messages %}
-            <div class="admin-flash admin-flash-{{ category }}">{{ message }}</div>
-          {% endfor %}
-        </div>
-      {% endif %}
-    {% endwith %}
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %}
+    <div class="admin-flash-wrap">
+      {% for category, message in messages %}
+      <div class="admin-flash admin-flash-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %} {% endwith %}
 
     <form method="POST" class="admin-form">
-      <label>Username
-        <input type="text" name="username" autocomplete="username" required autofocus>
+      <label
+        >Username
+        <input
+          type="text"
+          name="username"
+          autocomplete="username"
+          required
+          autofocus
+        />
       </label>
-      <label>Password
-        <input type="password" name="password" autocomplete="current-password" required>
+      <label
+        >Password
+        <input
+          type="password"
+          name="password"
+          autocomplete="current-password"
+          required
+        />
       </label>
-      <button type="submit" class="admin-btn admin-btn-primary admin-btn-block">Masuk</button>
+      <button type="submit" class="admin-btn admin-btn-primary admin-btn-block">
+        Masuk
+      </button>
     </form>
   </div>
 </div>
