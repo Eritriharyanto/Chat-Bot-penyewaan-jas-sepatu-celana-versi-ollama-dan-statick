@@ -14,7 +14,7 @@
   <div class="admin-shell">
     <aside class="admin-sidebar">
       <div class="admin-brand">
-        <img src="{{ url_for('static', filename='assets/logo.jfif') }}" alt="logo">
+        <img src="{{ url_for('static', filename='assets/' + logo_filename) }}" alt="logo">
         <div>
           <div class="admin-brand-title">Panel Admin</div>
           <div class="admin-brand-sub">{{ shop_name if shop_name is defined else '' }}</div>

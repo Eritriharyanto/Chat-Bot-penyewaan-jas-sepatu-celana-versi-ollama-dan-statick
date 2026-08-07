@@ -45,6 +45,16 @@ def create_app() -> Flask:
     state.reload_runtime_state()
     db.init_db()
 
+    @app.context_processor
+    def inject_logo():
+        """Bikin variabel `logo_filename` otomatis kebaca di SEMUA template
+        (landing page, login, & seluruh halaman admin) tanpa perlu di-pass
+        manual satu-satu di tiap render_template(). Dibaca langsung dari
+        admin_config.json (bukan dari state.ADMIN_CONFIG yang cuma sekali
+        dimuat pas start) supaya begitu admin ganti logo lewat halaman
+        Pengaturan, logo baru langsung tampil tanpa perlu restart server."""
+        return {"logo_filename": state.load_admin_config().get("logo_filename", "logo.jfif")}
+
     from chatbot.routes import register_routes
     register_routes(app)
 

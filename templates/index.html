@@ -23,7 +23,7 @@
   <div class="nav__inner">
     <a href="#top" class="nav__brand">
       <img
-        src="{{ url_for('static', filename='assets/logo.jfif') }}"
+        src="{{ url_for('static', filename='assets/' + logo_filename) }}"
         alt="{{ shop_name }}"
         class="logo"
       >
@@ -246,7 +246,7 @@
         <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
       </svg>
     </button>
-    <img src="{{ url_for('static', filename='assets/logo.jfif') }}" class="gate-modal__logo" alt="{{ shop_name }}">
+    <img src="{{ url_for('static', filename='assets/' + logo_filename) }}" class="gate-modal__logo" alt="{{ shop_name }}">
     <h2>Mulai Chat dengan {{ shop_name }}</h2>
     <p class="gate-modal__desc">Isi nama dan nomor telepon/WhatsApp kamu dulu ya, biar admin bisa hubungi balik kalau ada yang perlu ditindaklanjuti.</p>
     <form id="gateForm" class="gate-form">
@@ -269,7 +269,7 @@
   <header class="room__header">
     <div class="header__mark">
         <img
-            src="{{ url_for('static', filename='assets/logo.jfif') }}"
+            src="{{ url_for('static', filename='assets/' + logo_filename) }}"
             class="logo-chat"
         >
     </div>

@@ -145,7 +145,7 @@ STATIC_INTENT_KEYWORDS = [
         "alamat", "lokasi toko", "posisi toko", "dimana toko", "toko dimana",
         "tempatnya dimana", "tempatnya apa", "gmaps", "google maps", "map nya",
         "patokan", "rute ke toko", "arah ke toko", "dari stasiun", "kesininya",
-        "cara kesana", "nyampe sana", "letak toko", "posisi tokonya",
+        "cara kesana", "nyampe sana", "letak toko", "posisi tokonya", "lokasi", "info lokasi",
     ]),
     ("tanya_jam_operasional", [
         "jam buka", "jam tutup", "jam operasional", "buka jam", "tutup jam",
