@@ -108,7 +108,15 @@ def register(app):
         # jawaban pasti, langsung di-return tanpa perlu panggil LLM sama
         # sekali (lebih cepat & lebih akurat daripada nunggu LLM ngarang).
         if is_off_topic(user_message) and state.TIDAK_DIKENALI_INTENT:
-            return _stream_text(state.TIDAK_DIKENALI_INTENT["jawaban_default"], visitor_id)
+            # Pertanyaan di luar konteks -> tempelkan tombol "Chat Admin via
+            # WhatsApp" (action "kontak") biar user bisa langsung diarahkan
+            # ke admin tanpa perlu cari-cari kontaknya sendiri.
+            return _stream_text(
+                state.TIDAK_DIKENALI_INTENT["jawaban_default"],
+                visitor_id,
+                headers={"X-Chat-Action": "kontak"},
+                chat_action="kontak",
+            )
 
         greeting_reply = try_greeting_answer(user_message)
         if greeting_reply:
@@ -158,7 +166,12 @@ def register(app):
         # lokal kecil kadang tetap coba jawab pakai pengetahuan umum
         # (mis. "siapa itu jokowi") walau system prompt udah melarang.
         if not any(kw in user_message.lower() for kw in state.DOMAIN_KEYWORDS) and state.TIDAK_DIKENALI_INTENT:
-            return _stream_text(state.TIDAK_DIKENALI_INTENT["jawaban_default"], visitor_id)
+            return _stream_text(
+                state.TIDAK_DIKENALI_INTENT["jawaban_default"],
+                visitor_id,
+                headers={"X-Chat-Action": "kontak"},
+                chat_action="kontak",
+            )
 
         # Gak ada guard statis yang cocok -> serahin ke LLM (Ollama).
         messages = [{"role": "system", "content": state.SYSTEM_PROMPT}] + history + [
