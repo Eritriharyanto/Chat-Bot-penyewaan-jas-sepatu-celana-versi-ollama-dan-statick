@@ -182,7 +182,7 @@ STATIC_INTENT_KEYWORDS = [
     ]),
     ("ucapan_terima_kasih", [
         "makasih", "makasi", "terima kasih", "terimakasih", "trims",
-        "thanks", "thank you",
+        "thanks", "thank you", "oke", "ok", "sip", "mantap", "bagus", "keren", "top markotop",
     ]),
     ("tanya_kontak", [
         "nomor wa", "no wa", "nomor whatsapp", "kontak admin", "kontaknya",
