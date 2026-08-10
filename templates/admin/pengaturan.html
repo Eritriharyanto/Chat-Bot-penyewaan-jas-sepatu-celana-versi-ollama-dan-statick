@@ -6,28 +6,30 @@
   <p class="admin-muted">Login sebagai: <strong>{{ username }}</strong></p>
 </div>
 
-<form method="POST" action="{{ url_for('admin_pengaturan_logo') }}" enctype="multipart/form-data" class="admin-card admin-form" style="max-width: 420px;">
-  <h2>Ganti Logo</h2>
-  <div style="margin-bottom: 12px;">
-    <img src="{{ url_for('static', filename='assets/' + logo_filename) }}" alt="Logo saat ini" style="max-width: 160px; max-height: 160px; display: block; border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px;">
-  </div>
-  <label>Pilih file logo baru (PNG, JPG, JPEG, atau WEBP)
-    <input type="file" name="logo" accept=".png,.jpg,.jpeg,.webp,.gif" required>
-  </label>
-  <button type="submit" class="admin-btn admin-btn-primary">Ganti Logo</button>
-</form>
+<div class="admin-pengaturan-grid">
+  <form method="POST" action="{{ url_for('admin_pengaturan_logo') }}" enctype="multipart/form-data" class="admin-card admin-form">
+    <h2>Ganti Logo</h2>
+    <div class="admin-logo-preview">
+      <img src="{{ url_for('static', filename='assets/' + logo_filename) }}" alt="Logo saat ini">
+    </div>
+    <label>Pilih file logo baru (PNG, JPG, JPEG, atau WEBP)
+      <input type="file" name="logo" accept=".png,.jpg,.jpeg,.webp,.gif" required>
+    </label>
+    <button type="submit" class="admin-btn admin-btn-primary">Ganti Logo</button>
+  </form>
 
-<form method="POST" class="admin-card admin-form" style="max-width: 420px;">
-  <h2>Ganti password</h2>
-  <label>Password lama
-    <input type="password" name="password_lama" required>
-  </label>
-  <label>Password baru (minimal 8 karakter)
-    <input type="password" name="password_baru" required minlength="8">
-  </label>
-  <label>Ulangi password baru
-    <input type="password" name="password_ulang" required minlength="8">
-  </label>
-  <button type="submit" class="admin-btn admin-btn-primary">Ganti password</button>
-</form>
+  <form method="POST" class="admin-card admin-form">
+    <h2>Ganti password</h2>
+    <label>Password lama
+      <input type="password" name="password_lama" required>
+    </label>
+    <label>Password baru (minimal 8 karakter)
+      <input type="password" name="password_baru" required minlength="8">
+    </label>
+    <label>Ulangi password baru
+      <input type="password" name="password_ulang" required minlength="8">
+    </label>
+    <button type="submit" class="admin-btn admin-btn-primary">Ganti password</button>
+  </form>
+</div>
 {% endblock %}
