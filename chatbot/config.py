@@ -49,4 +49,15 @@ WARNA_HEX = {
     "Biru Elektrik": "#0B5ED7",
     "Coklat": "#5C4033",
     "Hitam Doff": "#1F2937",
+    # Varian khusus dasi (nama polos/motif, bukan nama warna dasar)
+    "Hitam Polos": "#111827",
+    "Navy Polos": "#1E3A5F",
+    "Maroon Polos": "#7A2331",
+    "Silver Metalik": "#B8B8B8",
+    "Gold Metalik": "#C9A227",
+    "Motif Polkadot Navy": "#1E3A5F",
+    "Motif Garis Diagonal Hitam-Silver": "#374151",
+    "Motif Batik Coklat": "#6B4423",
+    "Cream Polos": "#F1E7D0",
+    "Hijau Army Polos": "#4B5320",
 }
