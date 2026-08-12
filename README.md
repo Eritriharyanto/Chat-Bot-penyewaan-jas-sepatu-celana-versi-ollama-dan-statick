@@ -161,4 +161,6 @@ Semua perubahan disimpan ke `data/knowledge_base.json` / `data/intents.json` dan
  4. johan
 ## 📄 Lisensi
 
-Belum ditentukan — tambahkan file `LICENSE` jika ingin membuat project ini open source secara resmi.
+Belum ditentukan — tambahkan file `LICENSE` jika ingin membuat project ini open source secara resmi. 
+
+---
