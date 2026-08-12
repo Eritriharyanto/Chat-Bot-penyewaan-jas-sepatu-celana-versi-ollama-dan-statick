@@ -19,8 +19,6 @@ Chatbot ini bisa menjawab pertanyaan soal harga sewa, ukuran, stok warna, paket 
 - 🔐 **Panel admin** untuk mengelola produk, paket, info toko, FAQ, dan riwayat chat
 - 🖥️ Tema tampilan chat bergaya *navy & brass*, terinspirasi toko tailor
 
----
-
 ## 🛠️ Tech Stack
 
 | Bagian | Teknologi |
