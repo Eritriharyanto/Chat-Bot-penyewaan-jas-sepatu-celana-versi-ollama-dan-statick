@@ -7,7 +7,7 @@ mudah diubah tanpa perlu bongkar kode logic di modul lain.
 """
 from pathlib import Path
 
-# Chatbot7inc/  (root project, 1 level di atas folder package "chatbot")
+# Chatbot7inc/  (root project, 1 level diatas folder package "chatbot")
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
 
