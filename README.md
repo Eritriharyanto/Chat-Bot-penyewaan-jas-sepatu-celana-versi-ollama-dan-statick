@@ -39,7 +39,7 @@ Chatbot ini bisa menjawab pertanyaan soal harga sewa, ukuran, stok warna, paket 
 Download & install dari **<https://ollama.com/download>** (Windows/macOS/Linux).
 Setelah terinstall, Ollama otomatis jalan sebagai service di background di `http://localhost:11434`.
 
-### 2. Tarik (download) model
+### 2. Tarik (download) model 1
 ```bash
 ollama pull llama3.2:3b
 ```
